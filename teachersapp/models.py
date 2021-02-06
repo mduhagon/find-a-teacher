@@ -60,6 +60,12 @@ class TeachingProfile(db.Model):
         back_populates="teaching_offers"
     )
 
+    # This is a convenience method to display all
+    # languages offered in a string like:
+    # Language 1 / Language 2 / Language 3
+    def offered_languages_str(self):
+        return ' / '.join([str(elem.name) for elem in self.offered_languages])
+
     def __repr__(self):
         return f"TeachingProfile({self.id}, user_id: {self.user_id}, '{self.title}')"
 

@@ -1,6 +1,31 @@
 {% extends "layout.html" %}
 {% block content %}
-<!--Main layout-->
-CATALOG
-<!--Main layout-->
+<form method="GET" action="">
+<div class="row pb-md-3">
+  <div class="col">
+    <h5>Select the language:</h5>
+  </div>
+  <div class="col">    
+    <select name="lang" class="form-control" onchange="this.form.submit()">
+      {% for l in languages %}
+        <option value="{{l.id}}" {% if l.id == selected_lang.id %} selected {% endif %}>{{l.name}}</option>
+      {% endfor %}
+    </select> 
+  </div>
+</div>
+</form>
+
+{% for teachingProfile in selected_lang.teaching_offers %}
+<article class="media content-section">
+  <div class="media-body">
+    <div class="article-metadata">
+      <a class="mr-2" href="#">{{ teachingProfile.user.name }}</a>
+      <small class="text-muted">Teaches: {{ teachingProfile.offered_languages_str() }}</small>
+    </div>
+    <h2><a class="article-title" href="#">{{ teachingProfile.title }}</a></h2>
+    <p class="article-content">{{ teachingProfile.service_description }}</p>
+  </div>
+</article>
+{% endfor %}
+
 {% endblock content %}

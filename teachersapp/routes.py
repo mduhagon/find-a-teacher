@@ -1,17 +1,25 @@
 from teachersapp import app, db, bcrypt
 from flask import render_template, url_for, flash, redirect, request
 from teachersapp.forms import RegistrationForm, LoginForm
-from teachersapp.models import User
+from teachersapp.models import User, Language
 from flask_login import login_user, current_user, logout_user, login_required
 from sqlalchemy.exc import IntegrityError
 
 @app.route("/")
 def home():
-    return render_template('home.html')
+    return render_template('home.html', map_key=app.config['GOOGLE_MAPS_API_KEY'])
 
 @app.route("/catalog")
 def catalog():
-    return render_template('catalog.html') 
+    languages = Language.query.all()
+    selected_lang_id = request.args.get('lang', default=1, type=int)
+    selected_lang = next(x for x in languages if x.id == selected_lang_id)
+
+    return render_template(
+        'catalog.html', 
+        languages=languages, 
+        selected_lang=selected_lang
+    ) 
 
 @app.route("/logout")
 @login_required
