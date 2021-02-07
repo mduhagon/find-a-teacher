@@ -5,6 +5,7 @@ from flask_login import LoginManager
 
 app = Flask(__name__)
 app.config.from_object('teachersapp.default_settings')
+app.config.from_envvar('YOURAPPLICATION_SETTINGS')
 
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)

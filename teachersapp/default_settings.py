@@ -1,3 +1,5 @@
-SECRET_KEY = '5edb6a1c21b18532ffaa4fb0ba06e9c1'
+SECRET_KEY = 'SECRET_KEY_OVERRIDE'
 SQLALCHEMY_DATABASE_URI = 'sqlite:///site.db'
-GOOGLE_MAPS_API_KEY = 'API_KEY' # DO NOT COMMIT ACTUAL KEY TO REPO
+# DO NOT Fill actual key here, but on local_settings_do_not_commit.py
+# which is not on Git
+GOOGLE_MAPS_API_KEY = 'DUMMY_KEY_OVERRIDE!' 
