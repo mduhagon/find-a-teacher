@@ -14,7 +14,15 @@ def random_suffix():
     return ''.join(random.choice(letters) for i in range(5))  
 
 db.drop_all()
+
+# This attempts to fix this error:
+# AddGeometryColumn() error: unexpected metadata layout
+# DiscardGeometryColumn: "no such table: geometry_columns"
+db.engine.execute("SELECT InitSpatialMetaData();")
+
 db.create_all()
+
+
 
 # Insert the list of languages that can be offered in the site
 langs = []
@@ -61,6 +69,7 @@ with open("teachersapp/resources/dummy-users.txt", "r") as a_file:
         title=serviceTitle, 
         service_description=serviceDescription, 
         service_address=streetAddress,
+        service_location='POINT(' + str(longitude) + ' ' + str(latitude) + ')',
         user=user)
 
     for l in teacher_langs:    
@@ -72,6 +81,4 @@ with open("teachersapp/resources/dummy-users.txt", "r") as a_file:
 
 print(f"Added fake users: {count_users}")
         
-
-
 db.session.commit()

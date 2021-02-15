@@ -2,6 +2,8 @@ import enum
 from datetime import datetime
 from teachersapp import db, login_manager
 from flask_login import UserMixin
+from sqlalchemy import func
+from geoalchemy2 import Geometry
 
 
 @login_manager.user_loader
@@ -48,7 +50,7 @@ class TeachingProfile(db.Model):
     service_description = db.Column(db.Text, nullable=False)
     contact_details = db.Column(db.Text)
     service_address = db.Column(db.String(200), nullable=False)
-    #TODO: I will need to store the location as a coordinate as well (for map integration)
+    service_location = db.Column(Geometry("POINT", management=True)) #srid=25833, dimension=2
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
     # many to one side of the relationship of TeachingProfiles with Users
@@ -68,6 +70,15 @@ class TeachingProfile(db.Model):
 
     def __repr__(self):
         return f"TeachingProfile({self.id}, user_id: {self.user_id}, '{self.title}')"
+
+    @staticmethod
+    def get_profiles_within_radius(point, radius):
+        """Return all teaching profiles within a given radius (in meters)"""
+        return TeachingProfile.query.filter(func.ST_Distance_Sphere(TeachingProfile.service_location, point) < radius).all()
+
+    @staticmethod
+    def point_representation(latitude, longitude):
+        return 'POINT(' + str(longitude) + ' ' + str(latitude) + ')'
 
 class Language(db.Model):   
     __tablename__ = 'languages'  

@@ -1,13 +1,20 @@
 from teachersapp import app, db, bcrypt
 from flask import render_template, url_for, flash, redirect, request
 from teachersapp.forms import RegistrationForm, LoginForm
-from teachersapp.models import User, Language
+from teachersapp.models import User, Language, TeachingProfile
 from flask_login import login_user, current_user, logout_user, login_required
 from sqlalchemy.exc import IntegrityError
 
 @app.route("/")
 def home():
-    return render_template('home.html', map_key=app.config['GOOGLE_MAPS_API_KEY'])
+    #profiles = TeachingProfile.get_profiles_within_radius(someProfile.service_location, 10000)
+    #profiles = TeachingProfile.query.limit(10).all()    
+    
+    return render_template(
+        'home.html', 
+        map_key=app.config['GOOGLE_MAPS_API_KEY'],
+        profiles=[]
+    )
 
 @app.route("/catalog")
 def catalog():
