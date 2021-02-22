@@ -4,16 +4,13 @@ from teachersapp.forms import RegistrationForm, LoginForm
 from teachersapp.models import User, Language, TeachingProfile
 from flask_login import login_user, current_user, logout_user, login_required
 from sqlalchemy.exc import IntegrityError
+from flask import jsonify
 
 @app.route("/")
 def home():
-    #profiles = TeachingProfile.get_profiles_within_radius(someProfile.service_location, 10000)
-    #profiles = TeachingProfile.query.limit(10).all()    
-    
     return render_template(
         'home.html', 
-        map_key=app.config['GOOGLE_MAPS_API_KEY'],
-        profiles=[]
+        map_key=app.config['GOOGLE_MAPS_API_KEY']
     )
 
 @app.route("/catalog")
@@ -76,4 +73,21 @@ def login():
             return redirect(next_page) if next_page else redirect(url_for('home'))
         else:
             flash('Login Unsuccessful. Please check email and password', 'danger')
-    return render_template('login.html', title='Login', form=form)      
+    return render_template('login.html', title='Login', form=form)    
+
+# JSON Api routes
+# ----------------
+@app.route("/api/get_profiles_in_radius")
+def get_profiles_in_radius():
+    latitude = float(request.args.get('lat'))
+    longitude = float(request.args.get('lng'))
+    radius = int(request.args.get('radius'))
+
+    # TODO: Validate the input? 
+
+    profiles = TeachingProfile.get_profiles_within_radius(lat=latitude, lng=longitude, radius=radius)
+    result = []
+    for p in profiles:
+        result.append(p.toDict())
+    return jsonify(result)
+      

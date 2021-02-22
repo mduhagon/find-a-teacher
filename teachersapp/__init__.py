@@ -13,8 +13,15 @@ db = SQLAlchemy(app)
 @event.listens_for(db.engine, "connect")
 def load_spatialite(dbapi_conn, connection_record):
   # From https://geoalchemy-2.readthedocs.io/en/latest/spatialite_tutorial.html
+  print('enable_load_extension')
   dbapi_conn.enable_load_extension(True)
-  dbapi_conn.load_extension('/usr/local/lib/mod_spatialite.so')
+  print('load_extension')
+  dbapi_conn.execute('SELECT load_extension("mod_spatialite")') 
+  # originally I would try and load the extension with the line below,
+  # using load_extension function, but that actually crashed my whole Flask app. 
+  # doing it via a SELECT fixed that problem for me.
+  #dbapi_conn.load_extension('/usr/local/lib/mod_spatialite')
+  
 
 bcrypt = Bcrypt(app)
 

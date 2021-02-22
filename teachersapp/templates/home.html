@@ -3,18 +3,23 @@
 <!--Main layout-->
     <!--Google map-->
     <div id="map"></div>
-    <script>
-      var locations = [
-      {% for p in profiles %}
-        {info:'{{ p.service_description }}', lng: 13.4050, lat: 52.5200, id: {{ p.id }}},
-      {% endfor %}
-      ];
-    </script>
     <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
     <script
       src="https://maps.googleapis.com/maps/api/js?key={{map_key}}&callback=initMap&libraries=&v=weekly"
       async
     ></script>
-
+    <HR>
+    <!--Highlighted / Selected Profile in Map: -->  
+    <article class="media content-section">
+      <div class="media-body">
+        <div class="article-metadata">
+          <a class="mr-2" href="#" id="hpUser"></a>
+          <small class="text-muted" id="hpLanguages"></small>
+        </div>
+        <h2><a class="article-title" href="#" id="hpTitle"></a></h2>
+        <h4 id="hpAddress"></h4>
+        <p class="article-content" id="hpDescription"></p>
+      </div>
+    </article>
 <!--Main layout-->
 {% endblock content %}

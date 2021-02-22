@@ -4,6 +4,9 @@ from teachersapp import db, login_manager
 from flask_login import UserMixin
 from sqlalchemy import func
 from geoalchemy2 import Geometry
+from geoalchemy2.shape import to_shape
+from geoalchemy2.elements import WKTElement
+import json
 
 
 @login_manager.user_loader
@@ -40,6 +43,11 @@ profile_languages_table = db.Table('teaching_profile_languages', db.Model.metada
     db.Column('right_id', db.Integer, db.ForeignKey('languages.id'))
 )
 
+class SpatialConstants:
+    # SRID stands for Spatial Reference ID, some explanation of why we need one here: 
+    # https://www.gaia-gis.it/gaia-sins/spatialite-cookbook/html/srid.html
+    SRID = 4326
+
 class TeachingProfile(db.Model): 
     __tablename__ = 'teaching_profiles'
 
@@ -50,7 +58,7 @@ class TeachingProfile(db.Model):
     service_description = db.Column(db.Text, nullable=False)
     contact_details = db.Column(db.Text)
     service_address = db.Column(db.String(200), nullable=False)
-    service_location = db.Column(Geometry("POINT", management=True)) #srid=25833, dimension=2
+    service_location = db.Column(Geometry("POINT", srid=SpatialConstants.SRID, dimension=2, management=True)) 
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
     # many to one side of the relationship of TeachingProfiles with Users
@@ -68,17 +76,50 @@ class TeachingProfile(db.Model):
     def offered_languages_str(self):
         return ' / '.join([str(elem.name) for elem in self.offered_languages])
 
+    def get_service_location_latitude(self):
+        point = to_shape(self.service_location)
+        return point.y
+
+    def get_service_location_longitude(self):
+        point = to_shape(self.service_location)
+        return point.x  
+
     def __repr__(self):
         return f"TeachingProfile({self.id}, user_id: {self.user_id}, '{self.title}')"
 
+    # This can probably be improved. The aim of this method
+    # is to provide a serializable representation of an instance of
+    # this class, to be converted to json and return by the api routes
+    def toDict(self):
+        return {
+            'id': self.id,
+            'user_name': self.user.name,
+            'title': self.title,
+            'address': self.service_address,
+            'location': {
+                'lng': self.get_service_location_longitude(),
+                'lat': self.get_service_location_latitude()
+            },
+            'description': self.service_description,
+            'languages': self.offered_languages_str()
+        }    
+
     @staticmethod
-    def get_profiles_within_radius(point, radius):
+    def get_profiles_within_radius(lat, lng, radius):
         """Return all teaching profiles within a given radius (in meters)"""
-        return TeachingProfile.query.filter(func.ST_Distance_Sphere(TeachingProfile.service_location, point) < radius).all()
+        return TeachingProfile.query.filter(
+            func.PtDistWithin(
+                TeachingProfile.service_location, 
+                func.MakePoint(lng, lat, SpatialConstants.SRID), 
+                radius)
+            ).limit(100).all() #TODO: do I need to limit?
 
     @staticmethod
     def point_representation(latitude, longitude):
-        return 'POINT(' + str(longitude) + ' ' + str(latitude) + ')'
+        point = 'POINT(%s %s)' % (longitude, latitude)
+        wkb_element = WKTElement(point, srid=SpatialConstants.SRID)
+        return wkb_element
+
 
 class Language(db.Model):   
     __tablename__ = 'languages'  

@@ -47,9 +47,9 @@ dummy_service_descriptions = load_file_as_list("teachersapp/resources/dummy-serv
 count_users = 0
 usernames = []
 emails = []
-with open("teachersapp/resources/dummy-users.txt", "r") as a_file:
+with open("teachersapp/resources/dummy-users-v2.txt", "r") as a_file:
   for line in a_file:
-    givenName,streetAddress,city,email,username,latitude,longitude = line.strip().split(",")
+    givenName,streetAddress,city,email,username,old_latitude,old_longitude,newAddress,latitude,longitude = line.strip().split(",")
     teacher_num_langs = random.choice([1,2])
     teacher_langs = random.sample(langs, teacher_num_langs)
     serviceTitle = random.choice(dummy_service_titles).replace('#name', givenName).replace('#lang', teacher_langs[0].name)
@@ -68,8 +68,8 @@ with open("teachersapp/resources/dummy-users.txt", "r") as a_file:
     teachingProfile = TeachingProfile(
         title=serviceTitle, 
         service_description=serviceDescription, 
-        service_address=streetAddress,
-        service_location='POINT(' + str(longitude) + ' ' + str(latitude) + ')',
+        service_address=newAddress,
+        service_location=TeachingProfile.point_representation(latitude=latitude, longitude=longitude),
         user=user)
 
     for l in teacher_langs:    
