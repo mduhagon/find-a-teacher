@@ -20,3 +20,4 @@ export YOURAPPLICATION_SETTINGS=/home/mduhagon/findATeacherRepo/find-a-teacher/l
 ```
 python run.py
 ```
+.
