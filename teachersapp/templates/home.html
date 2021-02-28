@@ -1,6 +1,22 @@
 {% extends "layout.html" %}
 {% block content %}
 <!--Main layout-->
+    <form method="GET" action="" onsubmit="return searchAddressSubmit()">
+      <label for="search_address">Search teachers near:</label>
+      <div class="row pb-md-3">
+          <div class="form-group col-md-11" style="margin-bottom: 0;">
+            <input type="text" name="search_address" id="search_address" class="form-control">
+          </div>
+          <div class="form-group col-md-1" style="margin-bottom: 0;">
+            <button type="submit" class="btn btn-primary mb-2">Search</button>
+          </div>
+          <div class="form-group col-md-12" style="margin-bottom: 0;">
+            <small id="addressHelpBlock" class="form-text">
+              Enter for example: 'Torfstraße 52, Berlin' or 'Wedding, Berlin' or 'Hamburg'
+            </small>
+          </div>
+      </div>
+    </form>
     <!--Google map-->
     <div id="map"></div>
     <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
