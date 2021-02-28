@@ -1,7 +1,7 @@
 SECRET_KEY = 'SECRET_KEY_OVERRIDE'
 SQLALCHEMY_DATABASE_URI = 'sqlite:///site.db'
 SQLALCHEMY_TRACK_MODIFICATIONS = False
-#SQLALCHEMY_ECHO = True
+SQLALCHEMY_ECHO = True
 
 # DO NOT Fill actual key here, but on local_settings_do_not_commit.py
 # which is not on Git
