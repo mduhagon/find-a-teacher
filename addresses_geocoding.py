@@ -4,9 +4,12 @@
 # by querying Google's Geocoding API (https://developers.google.com/maps/documentation/geocoding/start) 
 # (make sure you enable this API for your project)
 
-from teachersapp import db, app
 from urllib import parse
 import requests
+from teachersapp import create_app, db
+
+app = create_app()
+app.app_context().push()
 
 # I will collect the updated users in an array, so I can store that in a new file at the end
 updated_users = []

@@ -1,6 +1,10 @@
 import random, string
 from teachersapp import db, bcrypt
 from teachersapp.models import Language, User, UserTypes, TeachingProfile
+from teachersapp import create_app
+
+app = create_app()
+app.app_context().push()
 
 def load_file_as_list(filename):
     result = []
@@ -13,16 +17,14 @@ def random_suffix():
     letters = string.digits
     return ''.join(random.choice(letters) for i in range(5))  
 
-db.drop_all()
+db.drop_all(app=app)
 
 # This attempts to fix this error:
 # AddGeometryColumn() error: unexpected metadata layout
 # DiscardGeometryColumn: "no such table: geometry_columns"
 db.engine.execute("SELECT InitSpatialMetaData();")
 
-db.create_all()
-
-
+db.create_all(app=app)
 
 # Insert the list of languages that can be offered in the site
 langs = []
@@ -50,7 +52,7 @@ emails = []
 with open("teachersapp/resources/dummy-users-v2.txt", "r") as a_file:
   for line in a_file:
     givenName,streetAddress,city,email,username,old_latitude,old_longitude,newAddress,latitude,longitude = line.strip().split(",")
-    teacher_num_langs = random.choice([1,2])
+    teacher_num_langs = 1 #random.choice([1,2]) 
     teacher_langs = random.sample(langs, teacher_num_langs)
     serviceTitle = random.choice(dummy_service_titles).replace('#name', givenName).replace('#lang', teacher_langs[0].name)
     serviceDescription = random.choice(dummy_service_descriptions).replace('#name', givenName).replace('#lang', teacher_langs[0].name)
