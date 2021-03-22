@@ -9,13 +9,22 @@ Project for Frauenloop class: website for language teachers to offer classes, an
 . venv/bin/activate
 ```
 
-2. Set env variable pointing to local settings file:
+2. Set env variables that the app requires:
 
 ```
-export YOURAPPLICATION_SETTINGS=/home/mduhagon/findATeacherRepo/find-a-teacher/local_settings_do_not_commit.py
+export FINDATEACHER_SECRET_KEY=SOME_VALUE
+export FINDATEACHER_SQLALCHEMY_DATABASE_URI=SOME_VALUE
+exportFINDATEACHER_GOOGLE_MAPS_API_KEY=SOME_VALUE
 ```
 
-3. Run the Flask app:
+3. Initialize the Database:
+
+```
+export FLASK_APP=teachersapp
+flask db upgrade
+```
+
+4. Run the Flask app:
 
 ```
 python run.py
