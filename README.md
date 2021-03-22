@@ -14,7 +14,7 @@ Project for Frauenloop class: website for language teachers to offer classes, an
 ```
 export FINDATEACHER_SECRET_KEY=SOME_VALUE
 export FINDATEACHER_SQLALCHEMY_DATABASE_URI=SOME_VALUE
-exportFINDATEACHER_GOOGLE_MAPS_API_KEY=SOME_VALUE
+export FINDATEACHER_GOOGLE_MAPS_API_KEY=SOME_VALUE
 ```
 
 3. Initialize the Database:
