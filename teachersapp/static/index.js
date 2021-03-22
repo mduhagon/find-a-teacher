@@ -144,7 +144,7 @@ function refreshMarkers(mapCenter, zoomLevel) {
     "lng" : mapCenter.lng(),
     "radius" : radiusToZoomLevel[zoomLevel]
   }
-  var url = "http://localhost:5000/api/get_profiles_in_radius?" + dictToURI(params) 
+  var url = "/api/get_profiles_in_radius?" + dictToURI(params) 
   loadJSON(url, function(response) {
     // Parse JSON string into object
       var actual_JSON = JSON.parse(response);
